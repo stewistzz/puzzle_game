@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Puzzle Hobi (Drag & Drop) - Edu Game</title>
+  <style>
+    :root{--bg:#f6fbff;--card:#ffffff;--accent:#2b6cb0;--muted:#6b7280}
+    *{box-sizing:border-box}
+    body{font-family:Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:var(--bg); margin:0; padding:24px; color:#0f172a}
+    .wrap{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:380px 1fr;gap:20px}
+
+    /* SIDEBAR */
+    .panel{background:var(--card);padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(17,24,39,0.06)}
+    h1{font-size:18px;margin:0 0 8px}
+    p.lead{margin:0 0 12px;color:var(--muted);font-size:13px}
+    .meta{display:flex;gap:12px;align-items:center;margin-top:8px}
+    .chip{background:#eef2ff;color:var(--accent);padding:6px 10px;border-radius:999px;font-weight:600}
+    .score{font-size:28px;font-weight:700;color:#0b3b66}
+    .controls{display:flex;gap:8px;margin-top:12px}
+    button{background:var(--accent);color:white;border:0;padding:8px 12px;border-radius:8px;cursor:pointer}
+    button.secondary{background:#eef2f6;color:var(--accent);border:1px solid #d6e3f2}
+    button:disabled{opacity:.5;cursor:not-allowed}
+
+    /* GAME AREA */
+    .game{display:flex;flex-direction:column;gap:12px}
+    .board-wrap{display:flex;gap:12px;align-items:flex-start}
+    .board{width:640px;height:420px;background:linear-gradient(180deg,#dff1ff 0%, #f7fbff 100%);border-radius:12px;display:grid;place-items:center;padding:12px}
+    .target{position:relative;width:600px;height:360px;background:#fff;border:2px dashed rgba(0,0,0,0.04);border-radius:8px;display:grid;grid-template-columns:repeat(var(--cols), 1fr);grid-template-rows:repeat(var(--rows), 1fr);gap:4px;padding:8px}
+    .target .slot{position:relative;border-radius:6px;background:linear-gradient(180deg,#fff,#fbfdff);box-shadow:inset 0 0 0 1px rgba(11,45,78,0.02);display:flex;align-items:center;justify-content:center}
+    .target .slot.highlight{outline:3px solid rgba(43,108,176,0.18)}
+
+    .tray{width:320px;min-height:360px;background:linear-gradient(180deg,#ffffff,#f9fafb);border-radius:8px;padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;overflow:auto}
+    .piece{width:180px;height:120px;border-radius:6px;background:#e6f1ff;display:flex;align-items:center;justify-content:center;cursor:grab;touch-action:none;user-select:none;box-shadow:0 6px 14px rgba(11,45,78,0.06)}
+    .piece.dragging{opacity:.85;cursor:grabbing}
+    .small-piece{width:90px;height:60px}
+
+    .info{font-size:13px;color:var(--muted);margin-top:8px}
+
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* responsive */
+    @media (max-width:980px){.wrap{grid-template-columns:1fr;}.board{width:100%;}.tray{width:100%;min-height:140px;order:2}.board-wrap{flex-direction:column-reverse}}
+
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <aside class="panel">
+      <h1>Edu Puzzle: Hobi &amp; Keterampilan</h1>
+      <p class="lead">Game puzzle drag-and-drop untuk anak SD. Setiap level menampilkan gambar kegiatan hobi. Menyusun benar +10 poin.</p>
+
+      <div class="meta">
+        <div>
+          <div style="font-size:12px;color:var(--muted)">Level</div>
+          <div id="levelLabel">1 / 3</div>
+        </div>
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-size:12px;color:var(--muted)">Score</div>
+          <div class="score" id="score">0</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="btnRestart">Mulai Ulang</button>
+        <button class="secondary" id="btnHint">Beri Petunjuk</button>
+        <button class="secondary" id="btnShuffle">Acak</button>
+      </div>
+
+      <div class="info">
+        <strong>Petunjuk pedagogis:</strong>
+        <ul style="margin:8px 0 0;padding-left:18px;color:var(--muted)">
+          <li>Latih observasi bentuk dan warna.</li>
+          <li>Kembangkan strategi penyelesaian dan ketekunan.</li>
+          <li>Berikan time limit ringan bila perlu (opsional).</li>
+        </ul>
+      </div>
+
+      <div style="margin-top:12px">
+        <div style="font-size:13px;color:var(--muted)">Instruksi singkat:</div>
+        <ol style="margin:8px 0 0;padding-left:18px;color:var(--muted)">
+          <li>Tarik potongan puzzle ke kotak yang kosong.</li>
+          <li>Jika benar, potongan akan menempel dan memberi +10 poin.</li>
+          <li>Selesaikan semua potongan untuk naik level.</li>
+        </ol>
+      </div>
+    </aside>
+
+    <main class="game">
+      <div class="board-wrap panel" style="padding:16px;">
+        <div class="board">
+          <div id="target" class="target" style="--rows:3;--cols:3" aria-label="area puzzle"></div>
+        </div>
+
+        <div class="tray" id="tray" aria-label="tempat potongan"></div>
+      </div>
+
+      <div class="panel" style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong id="levelTitle">Level 1: Memancing</strong>
+          <div style="color:var(--muted);font-size:13px;margin-top:6px">Setiap potongan benar = <strong>+10</strong> poin.</div>
+        </div>
+        <div>
+          <button id="btnNext" disabled>Lanjut Level</button>
+        </div>
+      </div>
+
+      <footer class="panel" style="font-size:13px">Dibuat untuk pembelajaran: berpikir kritis &amp; pemecahan masalah. Selamat bermain!</footer>
+    </main>
+  </div>
+
+  <script>
+  /* ---------- GAME SETTINGS & LEVELS ---------- */
+  const POINT_PER_PIECE = 10;
+
+  // Level definitions. Each level must provide: name, rows, cols, draw(sceneCanvasContext)
+  const levels = [
+    {
+      id: 'memancing',
+      name: 'Memancing',
+      rows: 3, cols: 3,
+      draw: drawFishingScene
+    },
+    {
+      id: 'berkebun',
+      name: 'Berkebun',
+      rows: 3, cols: 3,
+      draw: drawGardeningScene
+    },
+    {
+      id: 'membaca',
+      name: 'Membaca',
+      rows: 3, cols: 3,
+      draw: drawReadingScene
+    }
+  ];
+
+  let state = { levelIndex: 0, score: 0, placedCount: 0, pieces: [] };
+
+  /* ---------- DOM refs ---------- */
+  const targetEl = document.getElementById('target');
+  const trayEl = document.getElementById('tray');
+  const scoreEl = document.getElementById('score');
+  const levelLabel = document.getElementById('levelLabel');
+  const levelTitle = document.getElementById('levelTitle');
+  const btnNext = document.getElementById('btnNext');
+  const btnRestart = document.getElementById('btnRestart');
+  const btnHint = document.getElementById('btnHint');
+  const btnShuffle = document.getElementById('btnShuffle');
+
+  /* ---------- Helper: create offscreen canvas and slice into pieces ---------- */
+  function createSceneCanvas(rows, cols, drawFn){
+    const W = 600, H = 360; // fixed board size
+    const canvas = document.createElement('canvas');
+    canvas.width = W; canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    // white background
+    ctx.fillStyle = '#fff'; ctx.fillRect(0,0,W,H);
+    // let the level's draw function paint the scene
+    drawFn(ctx, W, H);
+    return canvas;
+  }
+
+  function makePiecesFromCanvas(sceneCanvas, rows, cols){
+    const W = sceneCanvas.width, H = sceneCanvas.height;
+    const pw = Math.floor(W/cols), ph = Math.floor(H/rows);
+    const pieces = [];
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const pieceCanvas = document.createElement('canvas');
+        pieceCanvas.width = pw; pieceCanvas.height = ph;
+        const pctx = pieceCanvas.getContext('2d');
+        pctx.drawImage(sceneCanvas, c*pw, r*ph, pw, ph, 0,0,pw,ph);
+        // add a subtle border for visual clarity
+        pctx.strokeStyle = 'rgba(0,0,0,0.06)'; pctx.lineWidth = 2; pctx.strokeRect(0,0,pw,pw*(ph/pw));
+        pieces.push({ r, c, canvas: pieceCanvas, correctX: c*pw, correctY: r*ph, w: pw, h: ph });
+      }
+    }
+    return pieces;
+  }
+
+  /* ---------- Drag & Drop via Pointer events ---------- */
+  function makeDraggablePiece(pieceObj){
+    const el = document.createElement('div');
+    el.className = 'piece';
+    el.style.width = pieceObj.w + 'px';
+    el.style.height = pieceObj.h + 'px';
+    el.setAttribute('role','button');
+    el.setAttribute('aria-grabbed','false');
+
+    // use the piece canvas as background image by converting to data URL
+    el.appendChild(pieceObj.canvas);
+    pieceObj.dom = el;
+
+    // Pointer dragging
+    let isDown = false, startX=0, startY=0, origX=0, origY=0;
+
+    function toTrayPosition(){
+      // place into tray flow (remove absolute positioning)
+      el.style.position = '';
+      el.style.left = '';
+      el.style.top = '';
+      el.classList.remove('dragging');
+    }
+
+    function placeOnBoard(x,y){
+      el.style.position = 'absolute';
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.classList.add('dragging');
+    }
+
+    el.addEventListener('pointerdown', e=>{
+      if(el.dataset.placed==='true') return; // already placed
+      el.setPointerCapture(e.pointerId);
+      isDown = true; startX = e.clientX; startY = e.clientY;
+      const rect = el.getBoundingClientRect();
+      origX = rect.left + window.scrollX; origY = rect.top + window.scrollY;
+      el.style.position = 'absolute';
+      el.style.zIndex = 9999;
+      el.classList.add('dragging');
+      // move to body to avoid overflow clipping
+      document.body.appendChild(el);
+      el.style.left = origX + 'px'; el.style.top = origY + 'px';
+      el.setAttribute('aria-grabbed','true');
+    });
+
+    window.addEventListener('pointermove', e=>{
+      if(!isDown) return;
+      const dx = e.clientX - startX; const dy = e.clientY - startY;
+      el.style.left = (origX + dx) + 'px'; el.style.top = (origY + dy) + 'px';
+    });
+
+    window.addEventListener('pointerup', e=>{
+      if(!isDown) return; isDown=false;
+      el.releasePointerCapture(e.pointerId);
+      el.classList.remove('dragging');
+      el.setAttribute('aria-grabbed','false');
+      // check drop onto target
+      const dropResult = trySnapToTarget(el, pieceObj);
+      if(!dropResult){
+        // return to tray (append back)
+        toTrayPosition();
+        trayEl.appendChild(el);
+      }
+    });
+
+    return el;
+  }
+
+  function trySnapToTarget(domEl, piece){
+    const targetRect = targetEl.getBoundingClientRect();
+    const elRect = domEl.getBoundingClientRect();
+    const centerX = (elRect.left + elRect.right)/2 - targetRect.left;
+    const centerY = (elRect.top + elRect.bottom)/2 - targetRect.top;
+    // compute which slot this corresponds to
+    const rows = currentLevel.rows, cols = currentLevel.cols;
+    const cellW = Math.floor(targetRect.width/cols), cellH = Math.floor(targetRect.height/rows);
+    // nearest slot coordinates
+    const slotC = Math.floor(centerX / cellW);
+    const slotR = Math.floor(centerY / cellH);
+    // bounds check
+    if(slotC<0 || slotC>=cols || slotR<0 || slotR>=rows) return false;
+    const slotIndex = slotR*cols + slotC;
+    const slotEl = targetEl.children[slotIndex];
+    if(!slotEl) return false;
+    // if slot already has a piece, reject
+    if(slotEl.dataset.filled==='true') return false;
+
+    // check if this piece belongs to that slot (same r,c)
+    if(slotR === piece.r && slotC === piece.c){
+      // correct!
+      // snap exactly into slot
+      const slotRect = slotEl.getBoundingClientRect();
+      domEl.style.position = 'absolute';
+      domEl.style.left = (slotRect.left + window.scrollX) + 'px';
+      domEl.style.top = (slotRect.top + window.scrollY) + 'px';
+      domEl.style.width = piece.w + 'px';
+      domEl.style.height = piece.h + 'px';
+      // mark placed
+      domEl.dataset.placed = 'true';
+      slotEl.dataset.filled = 'true';
+      // lock into slot by appending in document body but aligned with slot
+      // optionally append to slot to keep DOM clean
+      slotEl.appendChild(domEl);
+      domEl.style.position = '';
+      domEl.style.left = '';
+      domEl.style.top = '';
+      domEl.style.zIndex = '';
+      state.placedCount++;
+      state.score += POINT_PER_PIECE;
+      updateScore();
+      // small success animation
+      slotEl.classList.add('placed');
+      setTimeout(()=>slotEl.classList.remove('placed'),400);
+      checkLevelComplete();
+      return true;
+    } else {
+      // wrong slot => brief shake to hint mismatch
+      animateWrong(domEl);
+      return false;
+    }
+  }
+
+  function animateWrong(el){
+    el.animate([
+      { transform: 'translateX(0px)' },
+      { transform: 'translateX(-8px)' },
+      { transform: 'translateX(8px)' },
+      { transform: 'translateX(0px)' }
+    ], { duration: 260 });
+  }
+
+  function updateScore(){ scoreEl.textContent = state.score; }
+
+  function checkLevelComplete(){
+    const total = currentLevel.rows * currentLevel.cols;
+    if(state.placedCount >= total){
+      btnNext.disabled = false;
+      levelTitle.textContent = `Level ${state.levelIndex+1} selesai — ${currentLevel.name}`;
+      // celebratory effect
+      confettiEffect();
+    }
+  }
+
+  function confettiEffect(){
+    // lightweight confetti: little colored squares falling from top
+    for(let i=0;i<24;i++){
+      const d = document.createElement('div');
+      d.style.position='fixed'; d.style.left=(Math.random()*80+10)+'%'; d.style.top='-20px'; d.style.width='10px'; d.style.height='10px'; d.style.background = ['#ff7b7b','#ffd27b','#7bf2a1','#7bd1ff','#b57bff'][Math.floor(Math.random()*5)]; d.style.zIndex=9999; d.style.borderRadius='2px';
+      document.body.appendChild(d);
+      d.animate([{transform:'translateY(0px) rotate(0deg)'},{transform:'translateY(400px) rotate(720deg)'}],{duration:1200+Math.random()*800, easing:'cubic-bezier(.2,.9,.2,1)'}).onfinish = ()=>d.remove();
+    }
+  }
+
+  /* ---------- Level lifecycle: render board slots, generate pieces, shuffle tray ---------- */
+  let currentLevel = levels[state.levelIndex];
+
+  function setupLevel(index){
+    currentLevel = levels[index];
+    state.levelIndex = index; state.placedCount = 0; state.pieces = [];
+    document.documentElement.style.setProperty('--rows', currentLevel.rows);
+    document.documentElement.style.setProperty('--cols', currentLevel.cols);
+    levelLabel.textContent = `${index+1} / ${levels.length}`;
+    levelTitle.textContent = `Level ${index+1}: ${currentLevel.name}`;
+    btnNext.disabled = true;
+    // clear target and tray
+    targetEl.innerHTML = '';
+    trayEl.innerHTML = '';
+
+    // create scene canvas and pieces
+    const scene = createSceneCanvas(currentLevel.rows, currentLevel.cols, currentLevel.draw);
+    const pieces = makePiecesFromCanvas(scene, currentLevel.rows, currentLevel.cols);
+    state.pieces = pieces;
+
+    // create slots in target grid
+    for(let r=0;r<currentLevel.rows;r++){
+      for(let c=0;c<currentLevel.cols;c++){
+        const slot = document.createElement('div');
+        slot.className = 'slot';
+        slot.dataset.r = r; slot.dataset.c = c; slot.style.minWidth = (pieces[0].w)+'px';
+        targetEl.appendChild(slot);
+      }
+    }
+
+    // create dom pieces, randomize order
+    const order = pieces.map((p,i)=>i);
+    shuffleArray(order);
+    for(const i of order){
+      const p = pieces[i];
+      const dom = makeDraggablePiece(p);
+      // add small label for kids
+      const label = document.createElement('div');
+      label.style.position='absolute'; label.style.bottom='6px'; label.style.left='6px'; label.style.fontSize='11px'; label.style.color='#0b3b66';
+      label.textContent = '';
+      dom.appendChild(label);
+      trayEl.appendChild(dom);
+    }
+  }
+
+  /* ---------- Utilities ---------- */
+  function shuffleArray(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } }
+
+  function nextLevel(){
+    if(state.levelIndex < levels.length-1){
+      setupLevel(state.levelIndex+1);
+    } else {
+      alert('Selamat! Semua level selesai. Skor akhir: ' + state.score);
+    }
+  }
+
+  function restart(){ state.score = 0; updateScore(); setupLevel(0); }
+
+  function giveHint(){
+    // highlight one unfilled slot
+    const slots = Array.from(targetEl.children);
+    const empty = slots.filter(s=>s.dataset.filled!=='true');
+    if(empty.length===0) return;
+    const pick = empty[Math.floor(Math.random()*empty.length)];
+    pick.classList.add('highlight');
+    setTimeout(()=>pick.classList.remove('highlight'),1200);
+  }
+
+  function shuffleTray(){
+    // take pieces still in tray and reflow (we simply shuffle their order)
+    const pieces = Array.from(trayEl.children).filter(d=>d.dataset.placed!=='true');
+    const arr = pieces.slice(); shuffleArray(arr);
+    for(const el of arr) trayEl.appendChild(el);
+  }
+
+  /* ---------- Drawing functions for simple illustrated scenes ---------- */
+  function drawFishingScene(ctx, W, H){
+    // sky
+    const g = ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#bce7ff'); g.addColorStop(0.6,'#dff4ff'); g.addColorStop(1,'#fff'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // sun
+    ctx.fillStyle='#ffd86b'; ctx.beginPath(); ctx.arc(520,60,28,0,Math.PI*2); ctx.fill();
+    // water
+    ctx.fillStyle='#7fd3ff'; ctx.fillRect(0,H*0.55,W,H*0.45);
+    // waves
+    ctx.fillStyle='rgba(255,255,255,0.12)'; for(let i=0;i<8;i++) ctx.fillRect(i*80, H*0.6 + (i%2?6:0), 60, 8);
+    // boat
+    ctx.fillStyle='#8b4fff'; ctx.beginPath(); ctx.moveTo(160,210); ctx.quadraticCurveTo(240,250,320,210); ctx.lineTo(160,210); ctx.fill();
+    ctx.fillStyle='#3b2d6b'; ctx.fillRect(210,170,80,32);
+    // person
+    ctx.fillStyle='#ffd4b6'; ctx.beginPath(); ctx.arc(250,150,12,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#2b6cb0'; ctx.fillRect(240,162,20,24);
+    // fishing rod
+    ctx.strokeStyle='#6b4b2d'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(260,140); ctx.lineTo(320,100); ctx.stroke();
+    ctx.strokeStyle='#000'; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(320,100); ctx.quadraticCurveTo(350,115,350,150); ctx.stroke();
+    // fish
+    ctx.fillStyle='#ff8b6b'; ctx.beginPath(); ctx.ellipse(420,260,24,14,0,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#ffb6a0'; ctx.fillRect(434,254,8,12);
+    // grass on shore
+    ctx.fillStyle='#5fb97f'; for(let x=20;x<120;x+=8){ ctx.fillRect(x, H*0.55 - (x%3?8:16), 3, (x%3?20:28)); }
+  }
+
+  function drawGardeningScene(ctx, W, H){
+    const g = ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#eaffd9'); g.addColorStop(1,'#ffffff'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    // soil
+    ctx.fillStyle='#d9c6b3'; ctx.fillRect(0,H*0.7,W,H*0.3);
+    // gardener
+    ctx.fillStyle='#ffddb6'; ctx.beginPath(); ctx.arc(150,160,16,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#4aa96c'; ctx.fillRect(140,176,20,36);
+    // plant pots
+    ctx.fillStyle='#8b5a2b'; ctx.fillRect(320,210,60,40); ctx.fillStyle='#60b776'; ctx.beginPath(); ctx.ellipse(350,200,40,24,0,0,Math.PI*2); ctx.fill();
+    // watering can
+    ctx.fillStyle='#2b6cb0'; ctx.fillRect(200,230,56,20); ctx.fillRect(230,208,10,28);
+  }
+
+  function drawReadingScene(ctx, W, H){
+    ctx.fillStyle='#fff8e6'; ctx.fillRect(0,0,W,H);
+    // carpet
+    ctx.fillStyle='#f7d6ff'; ctx.fillRect(40,220,520,110);
+    // bookshelf
+    ctx.fillStyle='#7c4bff'; ctx.fillRect(20,40,120,160);
+    ctx.fillStyle='#fff'; for(let i=0;i<4;i++){ ctx.fillRect(30,55+i*36,100,18); }
+    // kid reading
+    ctx.fillStyle='#ffd6b6'; ctx.beginPath(); ctx.arc(320,150,22,0,Math.PI*2); ctx.fill(); ctx.fillStyle='#7b8cff'; ctx.fillRect(295,170,50,40);
+    // book
+    ctx.fillStyle='#ffd27b'; ctx.fillRect(300,200,70,36);
+  }
+
+  /* ---------- Event bindings ---------- */
+  btnNext.addEventListener('click', ()=>{
+    if(state.levelIndex < levels.length-1){
+      setupLevel(state.levelIndex+1);
+    } else {
+      alert('Kamu sudah menyelesaikan semua level! Skor akhir: ' + state.score);
+    }
+  });
+  btnRestart.addEventListener('click', restart);
+  btnHint.addEventListener('click', giveHint);
+  btnShuffle.addEventListener('click', shuffleTray);
+
+  // keyboard accessibility: H = hint, R = restart, N = next
+  window.addEventListener('keydown', e=>{
+    if(e.key.toLowerCase()==='h') giveHint();
+    if(e.key.toLowerCase()==='r') restart();
+    if(e.key.toLowerCase()==='n') nextLevel();
+  });
+
+  // initialize
+  setupLevel(0);
+
+  </script>
+</body>
+</html>

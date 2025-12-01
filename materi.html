@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Materi Hobi</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="materi">
+
+  <a href="index.html" class="back-btn">← Kembali</a>
+
+  <div class="materi-container">
+    <img id="hobi-img" src="assets/img/hobi/membaca.png" class="hobi-img">
+    
+    <h2 id="hobi-title">Membaca</h2>
+    <p id="hobi-desc">
+      Membaca adalah kegiatan melihat dan memahami tulisan. Membaca dapat membuat kita pintar.
+    </p>
+
+    <div class="nav-materi">
+      <button onclick="prevMateri()">←</button>
+      <button onclick="nextMateri()">→</button>
+    </div>
+  </div>
+
+  <script>
+    const materi = [
+      {
+        nama:"Membaca",
+        img:"assets/img/membaca.png",
+        desc:"Membaca membuat kita pintar dan tahu banyak hal baru."
+      },
+      {
+        nama:"Menulis",
+        img:"assets/img/menulis.png",
+        desc:"Menulis membantu kita bercerita dan mencatat ide-ide."
+      },
+      {
+        nama:"Menggambar",
+        img:"assets/img/menggambar.png",
+        desc:"Menggambar melatih kreativitas dan imajinasi."
+      },
+      {
+        nama:"Melukis",
+        img:"assets/img/melukis.png",
+        desc:"Melukis membuat kita bisa menciptakan karya seni."
+      },
+      {
+        nama:"Memancing",
+        img:"assets/img/memancing.png",
+        desc:"Memancing melatih kesabaran dan ketelitian."
+      }
+    ];
+
+    let index = 0;
+
+    function loadMateri() {
+      document.getElementById("hobi-img").src = materi[index].img;
+      document.getElementById("hobi-title").innerText = materi[index].nama;
+      document.getElementById("hobi-desc").innerText = materi[index].desc;
+    }
+
+    function nextMateri() {
+      index = (index + 1) % materi.length;
+      loadMateri();
+    }
+    function prevMateri() {
+      index = (index - 1 + materi.length) % materi.length;
+      loadMateri();
+    }
+  </script>
+
+</body>
+</html>
