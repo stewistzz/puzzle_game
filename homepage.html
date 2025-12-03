@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Petualangan Hobi Seru! - Preview Gabungan</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bubblegum+Sans&family=Inter:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ==========================================================
+   ===============  STYLE DASAR (GLOBAL CSS)  ===============
+   ========================================================== */
+
+      :root {
+        --color-sky-blue: #90caf9;
+        --color-cloud-white: #ffffff;
+        --color-star-gold: #ffc107;
+        --color-book-green: #a5d6a7;
+        --color-text-dark: #3e2723;
+        --color-pink-primary: #ff70a6;
+        --color-yellow-nav: #ffd700;
+        --color-orange-shadow: #ff9900;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Bubblegum Sans", cursive;
+      }
+
+      /* Background */
+      body {
+        background-color: var(--color-sky-blue);
+        background-image: linear-gradient(
+          to bottom,
+          var(--color-sky-blue),
+          #e0f7fa
+        );
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      /* Wrapper */
+      .game-container {
+        width: 100%;
+        max-width: 1200px;
+        padding: 20px;
+        margin: auto;
+        text-align: center;
+      }
+
+      /* ==========================================================
+   ===================  HALAMAN UTAMA  =======================
+   ========================================================== */
+
+      .page-section {
+        display: none; /* hanya satu halaman yang tampil */
+      }
+      .page-section.active {
+        display: block;
+      }
+
+      /* ==== HEADER ===== */
+
+      .title-bubble {
+        background-color: #ffecb3;
+        border: 8px solid #ff9800;
+        border-radius: 40px;
+        padding: 15px 30px;
+        margin-bottom: 40px;
+        display: inline-flex;
+        align-items: center;
+        box-shadow: 0 10px 0 #d84315;
+      }
+
+      .mascot-img {
+        width: 80px;
+        height: 80px;
+        margin-right: 15px;
+      }
+
+      /* ==== MENU BUTTONS ===== */
+
+      .main-menu {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+
+      .menu-button {
+        width: 250px;
+        height: 250px;
+        text-align: center;
+        border-radius: 30px;
+        font-size: 36px;
+        font-weight: bold;
+        color: var(--color-text-dark);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+      }
+
+      .button-materi {
+        background-color: var(--color-book-green);
+        border: 10px solid #689f38;
+        box-shadow: 0 12px 0 #33691e;
+      }
+
+      .button-bermain {
+        background-color: var(--color-star-gold);
+        border: 10px solid #ff8f00;
+        box-shadow: 0 12px 0 #ff6f00;
+        clip-path: polygon(
+          50% 0%,
+          61% 35%,
+          98% 35%,
+          68% 57%,
+          79% 91%,
+          50% 70%,
+          21% 91%,
+          32% 57%,
+          2% 35%,
+          39% 35%
+        );
+      }
+
+      /* ==========================================================
+   ====================  HALAMAN HOBI  =======================
+   ========================================================== */
+
+      .back-button {
+        background-color: var(--color-yellow-nav);
+        padding: 10px 18px;
+        border-radius: 25px;
+        border: 3px solid var(--color-orange-shadow);
+        display: inline-block;
+        text-decoration: none;
+        color: black;
+        font-size: 20px;
+        margin-bottom: 20px;
+      }
+
+      .page-title {
+        font-size: 45px;
+        margin-bottom: 30px;
+      }
+
+      /* GRID HOBI */
+      .hobi-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        max-width: 900px;
+        margin: auto;
+      }
+
+      .hobi-item {
+        text-decoration: none;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hobi-icon-bg {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: 6px solid white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .hobi-name {
+        font-size: 28px;
+        color: black;
+      }
+
+      /* Warna */
+      .bg-pink {
+        background: #ffcdd2;
+      }
+      .bg-blue {
+        background: #bbdefb;
+      }
+      .bg-yellow {
+        background: #fff9c4;
+      }
+      .bg-green {
+        background: #c8e6c9;
+      }
+      .bg-purple {
+        background: #e1bee7;
+      }
+      .bg-orange {
+        background: #ffe0b2;
+      }
+      .bg-cyan {
+        background: #b2ebf2;
+      }
+      .bg-teal {
+        background: #b2dfdb;
+      }
+      .bg-red {
+        background: #ffcdd2;
+      }
+
+      /* ==========================================================
+   ===================  HALAMAN MATERI  ======================
+   ========================================================== */
+
+      .materi-title {
+        font-size: 55px;
+        color: white;
+        text-shadow: 3px 3px #ff70a6;
+        margin-bottom: 20px;
+      }
+
+      .materi-card {
+        background: white;
+        padding: 30px;
+        border-radius: 35px;
+        border: 8px solid #42a5f5;
+        box-shadow: 0 15px 0 #90caf9;
+        max-width: 800px;
+        margin: auto;
+        display: none;
+      }
+      .materi-card.active {
+        display: block;
+      }
+
+      .hobi-image {
+        width: 140px;
+        border-radius: 50%;
+        border: 6px solid #ff70a6;
+        margin-bottom: 15px;
+      }
+
+      .hobi-description {
+        font-family: "Inter", sans-serif;
+        font-size: 19px;
+        margin-top: 10px;
+      }
+
+      .nav-btn {
+        background: #ffc107;
+        padding: 12px 20px;
+        border-radius: 20px;
+        margin-top: 20px;
+        cursor: pointer;
+        border: 4px solid #ff8f00;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="game-container">
+      <!-- ==========================================================
+     ===============   HALAMAN UTAMA (ID: home)   ===============
+     ========================================================== -->
+      <section id="home" class="page-section active">
+        <header class="main-header">
+          <div class="title-bubble">
+            <img src="https://via.placeholder.com/80" class="mascot-img" />
+            <div>
+              <h1>Petualangan Hobi Seru!</h1>
+              <h2>Aku & Teman-temanku</h2>
+            </div>
+          </div>
+        </header>
+
+        <main class="main-menu">
+          <a
+            href="#"
+            class="menu-button button-materi"
+            onclick="openPage('hobi')"
+          >
+            MATERI
+          </a>
+
+          <a href="#" class="menu-button button-bermain"> BERMAIN </a>
+        </main>
+      </section>
+
+      <!-- ==========================================================
+     ===============   HALAMAN PILIH HOBI   ===================
+     ========================================================== -->
+      <section id="hobi" class="page-section">
+        <a href="#" class="back-button" onclick="openPage('home')">← Kembali</a>
+
+        <h1 class="page-title">Pilih Hobi Kamu!</h1>
+
+        <div class="hobi-grid">
+          <a class="hobi-item" onclick="openMateri('memasak')">
+            <div class="hobi-icon-bg bg-pink"></div>
+            <span class="hobi-name">Memasak</span>
+          </a>
+
+          <a class="hobi-item" onclick="openMateri('melukis')">
+            <div class="hobi-icon-bg bg-blue"></div>
+            <span class="hobi-name">Melukis</span>
+          </a>
+
+          <a class="hobi-item" onclick="openMateri('berenang')">
+            <div class="hobi-icon-bg bg-yellow"></div>
+            <span class="hobi-name">Berenang</span>
+          </a>
+
+          <a class="hobi-item" onclick="openMateri('berkebun')">
+            <div class="hobi-icon-bg bg-green"></div>
+            <span class="hobi-name">Berkebun</span>
+          </a>
+
+          <a class="hobi-item" onclick="openMateri('membaca')">
+            <div class="hobi-icon-bg bg-purple"></div>
+            <span class="hobi-name">Membaca Buku</span>
+          </a>
+
+          <a class="hobi-item" onclick="openMateri('bernyanyi')">
+            <div class="hobi-icon-bg bg-orange"></div>
+            <span class="hobi-name">Bernyanyi</span>
+          </a>
+
+          <a class="hobi-item" onclick="openMateri('memancing')">
+            <div class="hobi-icon-bg bg-teal"></div>
+            <span class="hobi-name">Memancing</span>
+          </a>
+
+          <a class="hobi-item" onclick="openMateri('olahraga')">
+            <div class="hobi-icon-bg bg-cyan"></div>
+            <span class="hobi-name">Olahraga</span>
+          </a>
+
+          <a class="hobi-item" onclick="openMateri('bermain')">
+            <div class="hobi-icon-bg bg-red"></div>
+            <span class="hobi-name">Bermain</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+     ===============   HALAMAN MATERI HOBI   ==================
+     ========================================================== -->
+      <section id="materi" class="page-section">
+        <a href="#" class="back-button" onclick="openPage('hobi')">← Kembali</a>
+
+        <h1 class="materi-title">Materi Hobi</h1>
+
+        <!-- Sebuah kartu materi -->
+        <div id="materi-card" class="materi-card">
+          <img id="materi-img" class="hobi-image" />
+          <h2 id="materi-nama"></h2>
+          <p id="materi-desc" class="hobi-description"></p>
+
+          <div class="nav-btn" onclick="openPage('hobi')">Pilih Hobi Lain</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ==========================================================
+     ======================  JAVASCRIPT  =======================
+     ========================================================== -->
+    <script>
+      /* Navigasi antar halaman */
+      function openPage(pageId) {
+        document
+          .querySelectorAll(".page-section")
+          .forEach((sec) => sec.classList.remove("active"));
+        document.getElementById(pageId).classList.add("active");
+      }
+
+      /* Data materi */
+      const materiData = {
+        memasak: {
+          nama: "Memasak",
+          gambar: "https://via.placeholder.com/150?text=MEMASAK",
+          desc: "Memasak adalah kegiatan seru untuk membuat makanan lezat!",
+        },
+        melukis: {
+          nama: "Melukis",
+          gambar: "https://via.placeholder.com/150?text=MELUKIS",
+          desc: "Melukis melatih kreativitas dan imajinasi!",
+        },
+        berenang: {
+          nama: "Berenang",
+          gambar: "https://via.placeholder.com/150?text=BERENANG",
+          desc: "Berenang membuat tubuh sehat dan kuat!",
+        },
+        berkebun: {
+          nama: "Berkebun",
+          gambar: "https://via.placeholder.com/150?text=BERKEBUN",
+          desc: "Berkebun mengajarkan cara merawat tanaman!",
+        },
+        membaca: {
+          nama: "Membaca Buku",
+          gambar: "https://via.placeholder.com/150?text=MEMBACA",
+          desc: "Membaca membuka wawasan dan dunia baru!",
+        },
+        bernyanyi: {
+          nama: "Bernyanyi",
+          gambar: "https://via.placeholder.com/150?text=BERNYANYI",
+          desc: "Bernyanyi membuat hati bahagia!",
+        },
+        memancing: {
+          nama: "Memancing",
+          gambar: "https://via.placeholder.com/150?text=MEMANCING",
+          desc: "Memancing melatih kesabaran dan ketenangan!",
+        },
+        olahraga: {
+          nama: "Olahraga",
+          gambar: "https://via.placeholder.com/150?text=OLAHRAGA",
+          desc: "Olahraga penting untuk menjaga kesehatan tubuh!",
+        },
+        bermain: {
+          nama: "Bermain",
+          gambar: "https://via.placeholder.com/150?text=BERMAIN",
+          desc: "Bermain adalah cara terbaik menikmati waktu!",
+        },
+      };
+
+      /* Buka materi tertentu */
+      function openMateri(key) {
+        let data = materiData[key];
+        document.getElementById("materi-img").src = data.gambar;
+        document.getElementById("materi-nama").innerText = data.nama;
+        document.getElementById("materi-desc").innerText = data.desc;
+
+        openPage("materi");
+      }
+    </script>
+  </body>
+</html>
