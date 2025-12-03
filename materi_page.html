@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Materi Hobi</title>
+    <link rel="stylesheet" href="css/style.css" />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      .container {
+        margin-top: 35px;
+      }
+
+      /* ======================
+      GRID GAMBAR BARU
+      =======================*/
+      .grid-hobi {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px; /* Jarak antar card */
+        padding: 10px; /* Padding lebih kecil agar tidak terlalu jauh */
+        justify-items: center; /* Semua item center */
+        margin: 0 auto; /* Center seluruh grid */
+        max-width: 1100px; /* Biar tidak terlalu melebar */
+      }
+
+      /* Card */
+      .hobi-card {
+        cursor: pointer;
+      }
+
+      .hobi-card img {
+        width: 220px;
+        transition: 0.3s ease;
+        border-radius: 12px;
+        animation: float 3s ease-in-out infinite;
+      }
+
+      /* Hover */
+      .hobi-card img:hover {
+        /* transform: scale(1.12); */
+        width: 240px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      }
+
+      /* Animasi awan */
+      @keyframes float {
+        0% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-6px);
+        }
+        100% {
+          transform: translateY(0px);
+        }
+      }
+
+      /* ======================
+      RESPONSIVE BREAKPOINT
+      =======================*/
+
+      /* Tablet — 3 kolom */
+      @media (max-width: 992px) {
+        .grid-hobi {
+          grid-template-columns: repeat(3, 1fr);
+          max-width: 900px;
+        }
+
+        .hobi-card img {
+          width: 195px;
+        }
+
+        .hobi-card img:hover {
+          width: 205px;
+        }
+      }
+
+      /* HP — 2 kolom */
+      @media (max-width: 768px) {
+        .grid-hobi {
+          grid-template-columns: repeat(2, 1fr);
+          padding: 15px 5px;
+        }
+
+        .hobi-card img {
+          width: 180px;
+        }
+
+        .hobi-card img:hover {
+          width: 185px;
+        }
+      }
+
+      /* HP kecil — 1 kolom */
+      /* @media (max-width: 480px) {
+        .grid-hobi {
+          grid-template-columns: repeat(1, 1fr);
+          padding: 10px;
+        }
+
+        .hobi-card img {
+          width: 130px;
+        }
+      } */
+
+      /* ======================
+           NAVBAR
+        =======================*/
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 30px;
+        background-color: #333;
+        position: relative;
+      }
+
+      .logo {
+        color: #fff;
+        font-size: 22px;
+        font-weight: bold;
+      }
+
+      .nav-links {
+        list-style: none;
+        display: flex;
+        gap: 25px;
+      }
+
+      .nav-links li a {
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+
+      .nav-links li a:hover {
+        color: #f0a500;
+      }
+
+      /* Hamburger */
+      .hamburger {
+        display: none;
+        font-size: 28px;
+        color: white;
+        cursor: pointer;
+      }
+
+      #menu-toggle {
+        display: none;
+      }
+
+      /* ======================
+   POPUP STYLE
+=======================*/
+      .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+      }
+
+      /* Perbesar gambar */
+      .popupImage {
+        width: 150px; /* dari 80px → lebih besar */
+        height: 150px;
+        margin-bottom: 10px;
+      }
+      /* Perbesar gambar */
+      .popupImage img{
+        width: 150px; /* dari 80px → lebih besar */
+        height: 150px;
+      }
+
+      /* Kotak popup */
+      .popup-box {
+        background: white;
+        padding: 25px;
+        width: 320px;
+        border-radius: 16px;
+        text-align: center;
+
+        /* Mengatur elemen vertikal ke tengah */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        animation: fadeIn 0.3s ease-in-out;
+      }
+
+      .popup-box button {
+        margin-top: 20px;
+        padding: 10px 22px;
+        border: none;
+        background: #333;
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        border-radius: 10px;
+      }
+
+      .popup-box button:hover {
+        background: #555;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: scale(0.8);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* ======================
+           RESPONSIVE
+        =======================*/
+      @media (max-width: 768px) {
+        .hamburger {
+          display: block;
+        }
+
+        .nav-links {
+          position: absolute;
+          top: 60px;
+          right: 0;
+          width: 200px;
+          background: #333;
+          flex-direction: column;
+          padding: 15px 0;
+          display: none;
+        }
+
+        #menu-toggle:checked + .hamburger + .nav-links {
+          display: flex;
+        }
+      }
+
+      /* bagian popup */
+      /* Overlay gelap transparan */
+      .popup-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+      }
+
+      /* Kotak popup */
+      .popup-box {
+        background: #fff7d1; /* warna kuning pastel */
+        padding: 25px 30px;
+        width: 320px;
+        border-radius: 20px;
+        text-align: center;
+        animation: popupBounce 0.45s ease;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        border: 3px solid #ffd86b;
+        font-family: "Comic Sans MS", "Poppins", sans-serif;
+      }
+
+      /* Icon di atas */
+      .popup-icon {
+        font-size: 150px;
+        margin-bottom: 10px;
+      }
+
+      /* Judul besar */
+      .popup-box h2 {
+        font-size: 24px;
+        margin: 5px 0 10px;
+        color: #d27b00;
+      }
+
+      /* Deskripsi */
+      .popup-box p {
+        font-size: 18px;
+        color: #444;
+        line-height: 1.4;
+      }
+
+      /* Tombol ceria */
+      .popup-btn {
+        margin-top: 20px;
+        padding: 12px 20px;
+        background: #ffb703;
+        border: none;
+        color: white;
+        font-size: 17px;
+        border-radius: 15px;
+        cursor: pointer;
+        transition: 0.3s;
+        width: 100%;
+      }
+
+      .popup-btn:hover {
+        background: #ff9500;
+        transform: scale(1.05);
+      }
+
+      /* Animasi muncul */
+      @keyframes popupBounce {
+        0% {
+          transform: scale(0.6);
+          opacity: 0;
+        }
+        60% {
+          transform: scale(1.05);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(1);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="logo">Hobiku</div>
+
+      <input type="checkbox" id="menu-toggle" />
+      <label for="menu-toggle" class="hamburger">&#9776;</label>
+
+      <!-- <ul class="nav-links">
+        <li><a href="index.html">Beranda</a></li>
+        <li><a href="#">Materi</a></li>
+        <li><a href="#">Tentang</a></li>
+      </ul> -->
+    </nav>
+
+    <a href="index.html" class="back-btn" style="display: inline-block"
+      >← Kembali</a
+    >
+    <div class="container">
+      <!-- ROW 1 -->
+      <div class="container grid-hobi">
+        <div
+          class="hobi-card"
+          onclick="showPopup('assets/img/icon_kids/5.png', 'Membaca', 'Membaca membuat kita tambah pintar dan membuka wawasan baru!')"
+        >
+          <img src="assets/img/icon_kids/5.png" />
+        </div>
+
+        <div
+          class="hobi-card"
+          onclick="showPopup('assets/img/icon_kids/6.png', 'Melukis', 'Melukis membantu kita mengekspresikan perasaan dan ide-ide kreatif!')"
+        >
+          <img src="assets/img/icon_kids/6.png" />
+        </div>
+
+        <div
+          class="hobi-card"
+          onclick="showPopup('assets/img/icon_kids/7.png', 'Memasak', 'Memasak adalah keterampilan penting yang menyenangkan dan bermanfaat!')"
+        >
+          <img src="assets/img/icon_kids/7.png" />
+        </div>
+
+        <div
+          class="hobi-card"
+          onclick="showPopup('assets/img/icon_kids/8.png', 'Berenang', 'Berenang adalah olahraga menyenangkan yang baik untuk kesehatan tubuh!')"
+        >
+          <img src="assets/img/icon_kids/8.png" />
+        </div>
+
+        <div
+          class="hobi-card"
+          onclick="showPopup('assets/img/icon_kids/9.png', 'Menyanyi', 'Menyanyi membuat hati bahagia dan melatih suara kita!')"
+        >
+          <img src="assets/img/icon_kids/9.png" />
+        </div>
+
+        <div
+          class="hobi-card"
+          onclick="showPopup('assets/img/icon_kids/Mulai Bermain(1).png', 'Olahraga', 'Olahraga menjaga tubuh tetap sehat dan bugar!')"
+        >
+          <img src="assets/img/icon_kids/Mulai Bermain(1).png" />
+        </div>
+
+        <div
+          class="hobi-card"
+          onclick="showPopup('assets/img/icon_kids/11.png', 'Bermain', 'Bermain membuat tubuh sehat dan menyenangkan!')"
+        >
+          <img src="assets/img/icon_kids/11.png" />
+        </div>
+
+        <div
+          class="hobi-card"
+          onclick="showPopup('assets/img/icon_kids/12.png', 'Memancing', 'Memancing melatih kesabaran dan ketelitian!')"
+        >
+          <img src="assets/img/icon_kids/12.png" />
+        </div>
+      </div>
+    </div>
+
+    <!-- POPUP -->
+    <div id="popupOverlay" class="popup-overlay">
+      <div class="popup-box">
+        <div class="popupImage"></div>
+        <h2 id="popupTitle"></h2>
+        <p id="popupDesc"></p>
+        <button onclick="closePopup()">Tutup</button>
+      </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+      function showPopup(img, title, desc) {
+        document.querySelector(".popupImage").innerHTML ='<img src="' +img +'" alt="Icon Hobi" style="width:150px; margin-bottom:10px;" />';
+        document.getElementById("popupTitle").innerText = title;
+        document.getElementById("popupDesc").innerText = desc;
+        document.getElementById("popupOverlay").style.display = "flex";
+      }
+
+      function closePopup() {
+        document.getElementById("popupOverlay").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
