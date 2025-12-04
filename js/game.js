@@ -11,25 +11,25 @@
 (() => {
   // DATA sederhana (emoji sebagai pengganti gambar)
   const hobbies = [
-    { key: "membaca", label: "Membaca", img: "../assets/img/games/13.png" },
-    { key: "melukis", label: "Melukis", img: "../assets/img/games/14.png" },
-    { key: "memasak", label: "Memasak", img: "../assets/img/games/15.png" },
-    { key: "berenang", label: "Berenang", img: "../assets/img/games/16.png" },
-    { key: "menyanyi", label: "Menyanyi", img: "../assets/img/games/17.png" },
-    { key: "olahraga", label: "Olahraga", img: "../assets/img/games/18.png" },
-    { key: "bermain", label: "Bermain", img: "../assets/img/games/19.png" },
-    { key: "memancing", label: "Memancing", img: "../assets/img/games/20.png" },
+    { key: "membaca", label: "Membaca", img: "./assets/img/games/13.png" },
+    { key: "melukis", label: "Melukis", img: "./assets/img/games/14.png" },
+    { key: "memasak", label: "Memasak", img: "./assets/img/games/15.png" },
+    { key: "berenang", label: "Berenang", img: "./assets/img/games/16.png" },
+    { key: "menyanyi", label: "Menyanyi", img: "./assets/img/games/17.png" },
+    { key: "olahraga", label: "Olahraga", img: "./assets/img/games/18.png" },
+    { key: "bermain", label: "Bermain", img: "./assets/img/games/19.png" },
+    { key: "memancing", label: "Memancing", img: "./assets/img/games/20.png" },
   ];
 
   const gambarHobi = {
-    membaca: "../assets/img/icons/5.png",
-    melukis: "../assets/img/icons/6.png",
-    memasak: "../assets/img/icons/7.png",
-    berenang: "../assets/img/icons/8.png",
-    menyanyi: "../assets/img/icons/9.png",
-    olahraga: "../assets/img/icons/10.png",
-    bermain: "../assets/img/icons/11.png",
-    memancing: "../assets/img/icons/12.png",
+    membaca: "./assets/img/icons/5.png",
+    melukis: "./assets/img/icons/6.png",
+    memasak: "./assets/img/icons/7.png",
+    berenang: "./assets/img/icons/8.png",
+    menyanyi: "./assets/img/icons/9.png",
+    olahraga: "./assets/img/icons/10.png",
+    bermain: "./assets/img/icons/11.png",
+    memancing: "./assets/img/icons/12.png",
   };
 
   // level config
